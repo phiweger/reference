@@ -3,7 +3,6 @@
 # * counterfactual plot
 # * triptyc plot
 # * coeftab
-# * compare, ensemble
 
 # rethinking package
 library(rethinking)
@@ -41,6 +40,7 @@ m <- map2stan(
 
 # summary of posterior inference
 precis(m, corr=T)
+pairs(m)
 # traceplot
 plot(m)
 
@@ -130,9 +130,34 @@ m <- map(
 #   Mean StdDev 5.5% 94.5%
 # a 0.32   0.09 0.18  0.46
 
+
 # Parameters in a logistic regression are on the scale of log-odds.
 logistic(0.32) # a
 logistic(c(0.18, 0.46)) # PI
+
+
+# see models code 10.4
+compare(m10.1, m10.2, m10.3)
+coeftab(m10.1, m10.2, m10.3)
+plot(coeftab(m10.1, m10.2, m10.3))
+
+# model-averaged posterior predictive check
+dpred <- data.frame(
+    prosoc_left=c(0, 1, 0, 1),
+    condition=c(0, 0, 1, 1)
+    )
+
+e <- ensemble(m10.1, m10.2, m10.3, data=dpred)
+p_pred <- apply(e$link, 2, mean)
+PI_pred <- apply(e$link, 2, PI)
+
+
+# convert fit method from MAP to STAN 
+m_stan <- map2stan(m, data=d, iter=1e4, warmup=1000)
+
+
+
+
 
 
 
