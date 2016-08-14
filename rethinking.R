@@ -2,7 +2,7 @@
 
 # * counterfactual plot
 # * triptyc plot
-# * coeftab
+# TODO: refresh argument
 
 # rethinking package
 library(rethinking)
@@ -74,6 +74,10 @@ m <- map2stan(
 # truncate a prior to e.g. have only values > 0
 # sigma ~ dnorm(0, 10) & T[0,]
 
+# another truncation
+# ..., data=..., constraints='lower=0', ...
+# TODO: Are they equivalent?
+
 
 # see model specification in Stan language
 stancode(m)
@@ -90,6 +94,8 @@ precis(m, depth=2)
 # sigma  44.96   6.93      34.54      55.54  2734    1
 
 plot(precis(m, depth=2))
+coef(m)
+plot(coef(m))
 
 # Plot implied predictions for shade, given water and bed.
 post <- extract.samples(m)
